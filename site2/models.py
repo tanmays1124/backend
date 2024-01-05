@@ -13,18 +13,20 @@ class CustomUser(AbstractUser):
         return self.username
 
 
-from django.db import models
+
+
+
 
 class QuizQuestion(models.Model):
-    # Assuming _id is an ObjectId in MongoDB, you can use Django's AutoField
-    # to automatically generate a unique ID for each question.
-    _id = models.AutoField(primary_key=True)
-
+    _id = models.ObjectIdField(primary_key = True)
     category = models.CharField(max_length=100)
     difficulty = models.CharField(max_length=10)
     question = models.TextField()
-    options = models.JSONField(default=list)  # Use JSONField for storing the list of options
-    answer = models.IntegerField()
+    option_a = models.TextField(default='')
+    option_b = models.TextField(default='')
+    option_c = models.TextField(default='')
+    option_d = models.TextField(default='')
+    answer = models.CharField(max_length=1)  # Assuming answer is a single character (a, b, c, or d)
 
     def __str__(self):
         return f"{self.category} - {self.difficulty} - {self.question}"

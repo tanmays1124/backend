@@ -76,5 +76,23 @@ def user_logout(request):
         
 
 class QuizQuestionList(generics.ListAPIView):
-    queryset = QuizQuestion.objects.all()
     serializer_class = QuizQuestionSerializer
+
+    def get_queryset(self):
+        queryset = QuizQuestion.objects.all()
+
+        # Get parameters from the request, default to None if not provided
+        category = self.request.query_params.get('category', None)
+        num_questions = self.request.query_params.get('num_questions', None)
+        difficulty = self.request.query_params.get('difficulty', None)
+
+        # Apply filters based on parameters
+        if category:
+            queryset = queryset.filter(category=category)
+        if difficulty:
+            queryset = queryset.filter(difficulty=difficulty)
+        if num_questions:
+            queryset = queryset[:int(num_questions)]
+        print(queryset)
+
+        return queryset
