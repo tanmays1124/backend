@@ -1,6 +1,6 @@
 
 from rest_framework import serializers
-from .models import CustomUser
+from .models import CustomUser, QuizQuestion
 
 class UserSerializer(serializers.ModelSerializer):
     class Meta:
@@ -18,3 +18,11 @@ class UserSerializer(serializers.ModelSerializer):
         user.set_password(validated_data['password'])
         user.save()
         return user
+    
+
+
+
+class QuizQuestionSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = QuizQuestion
+        fields = '__all__'

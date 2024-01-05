@@ -2,10 +2,12 @@ from django.shortcuts import render
 
 # Create your views here.
 
-from rest_framework import status
+from rest_framework import status, generics
 from rest_framework.response import Response
 from rest_framework.decorators import api_view
 from .serializers import UserSerializer
+from .models import QuizQuestion
+from .serializers import QuizQuestionSerializer
 
 @api_view(['POST'])
 def register_user(request):
@@ -48,7 +50,7 @@ def user_login(request):
 
         if user:
             token, _ = Token.objects.get_or_create(user=user)
-            return Response({'token': token.key}, status=status.HTTP_200_OK)
+            return Response({'token': token.key,'username':user.username}, status=status.HTTP_200_OK)
 
         return Response({'error': 'Invalid credentials'}, status=status.HTTP_401_UNAUTHORIZED)
     
@@ -71,3 +73,8 @@ def user_logout(request):
             return Response({'message': 'Successfully logged out.'}, status=status.HTTP_200_OK)
         except Exception as e:
             return Response({'error': str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+        
+
+class QuizQuestionList(generics.ListAPIView):
+    queryset = QuizQuestion.objects.all()
+    serializer_class = QuizQuestionSerializer
