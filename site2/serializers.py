@@ -1,6 +1,8 @@
 
 from rest_framework import serializers
 from .models import CustomUser, QuizQuestion
+from .models import QuizHistory
+
 
 class UserSerializer(serializers.ModelSerializer):
     class Meta:
@@ -25,4 +27,12 @@ class UserSerializer(serializers.ModelSerializer):
 class QuizQuestionSerializer(serializers.ModelSerializer):
     class Meta:
         model = QuizQuestion
+        fields = '__all__'
+
+
+
+
+class QuizHistorySerializer(serializers.ModelSerializer):
+    class Meta:
+        model = QuizHistory
         fields = '__all__'

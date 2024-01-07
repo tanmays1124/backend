@@ -30,3 +30,20 @@ class QuizQuestion(models.Model):
 
     def __str__(self):
         return f"{self.category} - {self.difficulty} - {self.question}"
+
+
+
+class Question(models.Model):
+    q_text = models.CharField(max_length=255)
+    is_correct = models.BooleanField() 
+    
+
+class QuizHistory(models.Model):
+    user = models.ForeignKey(CustomUser, on_delete=models.CASCADE)
+    domain = models.CharField(max_length=255)
+    score = models.IntegerField()
+    submission_time = models.DateTimeField(auto_now_add=True)
+    attempted_questions = models.ManyToManyField(Question)
+
+    def __str__(self):
+        return f"{self.user.username}'s Quiz History"

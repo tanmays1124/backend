@@ -41,6 +41,8 @@ INSTALLED_APPS = [
     'rest_framework.authtoken',
     'site2',
     'corsheaders',
+    # 'rest_framework_simplejwt',
+
 
 ]
 
@@ -134,9 +136,12 @@ AUTH_USER_MODEL = 'site2.CustomUser'
 REST_FRAMEWORK = {
     'DEFAULT_AUTHENTICATION_CLASSES': [
         'rest_framework.authentication.TokenAuthentication',
+        # 'rest_framework_simplejwt.authentication.JWTAuthentication',
+
     ],
     # Other settings...
 }
+
 CORS_ALLOWED_ORIGINS = [
     "http://localhost:3000",  # Replace with the origin of your React app
 ]

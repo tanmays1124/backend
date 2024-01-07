@@ -8,6 +8,17 @@ from rest_framework.decorators import api_view
 from .serializers import UserSerializer
 from .models import QuizQuestion
 from .serializers import QuizQuestionSerializer
+from rest_framework.permissions import IsAuthenticated
+from .models import QuizHistory
+from .serializers import QuizHistorySerializer
+
+from rest_framework.authtoken.models import Token
+from django.contrib.auth import authenticate
+from rest_framework.decorators import api_view
+from rest_framework.response import Response
+from rest_framework import status
+from django.core.exceptions import ObjectDoesNotExist
+from .models import CustomUser
 
 @api_view(['POST'])
 def register_user(request):
@@ -23,14 +34,7 @@ def register_user(request):
 
 
 
-    from rest_framework.authtoken.models import Token
-from django.contrib.auth import authenticate
-from rest_framework.decorators import api_view
-from rest_framework.response import Response
-from rest_framework import status
-from django.core.exceptions import ObjectDoesNotExist
 
-from .models import CustomUser
 
 @api_view(['POST'])
 def user_login(request):
@@ -96,3 +100,18 @@ class QuizQuestionList(generics.ListAPIView):
         print(queryset)
 
         return queryset
+    
+
+
+
+class QuizHistoryListCreateView(generics.ListCreateAPIView):
+    queryset = QuizHistory.objects.all()
+    serializer_class = QuizHistorySerializer
+    permission_classes = [IsAuthenticated]
+
+class QuizHistoryRetrieveView(generics.RetrieveAPIView):
+    queryset = QuizHistory.objects.all()
+    serializer_class = QuizHistorySerializer
+    permission_classes = [IsAuthenticated]
+    
+
