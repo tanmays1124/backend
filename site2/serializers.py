@@ -37,5 +37,5 @@ from .models import QuestionHistory
 class QuestionHistorySerializer(serializers.ModelSerializer):
     class Meta:
         model = QuestionHistory
-        fields = ['id', 'user', 'domain', 'difficulty_level', 'score', 'attempted_questions','submission_time']
+        fields = ['id', 'user_id', 'domain', 'difficulty_level', 'score', 'attempted_questions','submission_time']
 

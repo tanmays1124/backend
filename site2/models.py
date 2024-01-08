@@ -1,5 +1,7 @@
 from django.contrib.auth.models import AbstractUser
 from djongo import models
+from django.utils import timezone
+
 
 class CustomUser(AbstractUser):
     email = models.EmailField(unique=True)

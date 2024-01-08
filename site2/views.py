@@ -99,20 +99,74 @@ class QuizQuestionList(generics.ListAPIView):
             queryset = queryset[:int(num_questions)]
         print(queryset)
 
-        return 
+        return queryset
     
-
-
-
 
     
 from .models import QuestionHistory
 from .serializers import QuestionHistorySerializer
 
+
 class QuestionHistoryListCreateView(generics.ListCreateAPIView):
     queryset = QuestionHistory.objects.all()
     serializer_class = QuestionHistorySerializer
 
-class QuestionHistoryDetailView(generics.RetrieveUpdateDestroyAPIView):
-    queryset = QuestionHistory.objects.all()
+
+
+class QuestionHistoryDetailView(generics.ListAPIView):
     serializer_class = QuestionHistorySerializer
+
+    def get_queryset(self):
+        queryset = QuestionHistory.objects.all()
+
+        # Get parameters from the request, default to None if not provided
+        user_id = self.request.query_params.get('user_id', None)
+
+
+        # Apply filters based on parameters
+        if user_id:
+            queryset = queryset.filter(user_id=user_id)
+
+        print(queryset)
+
+        return queryset
+    
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    
+# from .models import QuestionHistory
+# from .serializers import QuestionHistorySerializer
+
+
+# class QuestionHistoryDetailView(generics.RetrieveUpdateDestroyAPIView):
+#     # queryset = QuestionHistory.objects.all()
+#     # serializer_class = QuestionHistorySerializer
+#     def get(self, request, user_id):
+#         try:
+#             # Retrieve question history for the specified user ID
+#             user_id = self.request.query_params.get('user', None)
+#             if user_id:
+#                 queryset = queryset.filter(user_id=user_id)
+
+#             # question_history = QuestionHistory.objects.filter(user_id=user_id)
+#             # serializer_class = QuestionHistorySerializer
+#             # serializer = QuestionHistorySerializer(question_history, many=True)
+#             return Response(serializer.data, status=status.HTTP_200_OK)
+#         except Exception as e:
+#             return Response({"error": str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)

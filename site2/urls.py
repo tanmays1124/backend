@@ -23,8 +23,8 @@ urlpatterns = [
     path('login/', user_login, name='login'),
     path('logout/', user_logout, name='logout'),
     path('questions/', QuizQuestionList.as_view(),name='questions'),
-    path('questionhistory/', QuestionHistoryListCreateView.as_view(), name='questionhistory-list-create'),
-    path('questionhistory/<int:pk>/', QuestionHistoryDetailView.as_view(), name='questionhistory-detail'),
+    path('questionhistorycreate/', QuestionHistoryListCreateView.as_view(), name='questionhistory-list-create'),
+    path('questionhistoryget/', QuestionHistoryDetailView.as_view(), name='questionhistory-detail'),
 
 
 ]
