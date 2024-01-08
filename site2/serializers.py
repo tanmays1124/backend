@@ -1,13 +1,14 @@
 
 from rest_framework import serializers
 from .models import CustomUser, QuizQuestion
-from .models import QuizHistory
-
+from rest_framework.response import Response
+from rest_framework import status
+from rest_framework.views import APIView
 
 class UserSerializer(serializers.ModelSerializer):
     class Meta:
         model = CustomUser
-        fields = ['username', 'email', 'password','first_name','last_name']
+        fields = ['id','username', 'email', 'password','first_name','last_name']
         extra_kwargs = {'password': {'write_only': True}}
 
     def create(self, validated_data):
@@ -31,8 +32,10 @@ class QuizQuestionSerializer(serializers.ModelSerializer):
 
 
 
+from .models import QuestionHistory
 
-class QuizHistorySerializer(serializers.ModelSerializer):
+class QuestionHistorySerializer(serializers.ModelSerializer):
     class Meta:
-        model = QuizHistory
-        fields = '__all__'
+        model = QuestionHistory
+        fields = ['id', 'user', 'domain', 'difficulty_level', 'score', 'attempted_questions','submission_time']
+

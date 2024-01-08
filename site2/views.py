@@ -1,6 +1,5 @@
 from django.shortcuts import render
 
-# Create your views here.
 
 from rest_framework import status, generics
 from rest_framework.response import Response
@@ -9,8 +8,7 @@ from .serializers import UserSerializer
 from .models import QuizQuestion
 from .serializers import QuizQuestionSerializer
 from rest_framework.permissions import IsAuthenticated
-from .models import QuizHistory
-from .serializers import QuizHistorySerializer
+
 
 from rest_framework.authtoken.models import Token
 from django.contrib.auth import authenticate
@@ -54,7 +52,9 @@ def user_login(request):
 
         if user:
             token, _ = Token.objects.get_or_create(user=user)
-            return Response({'token': token.key,'username':user.username}, status=status.HTTP_200_OK)
+            
+
+            return Response({'token': token.key,'username':user.username,'id':user.id}, status=status.HTTP_200_OK)
 
         return Response({'error': 'Invalid credentials'}, status=status.HTTP_401_UNAUTHORIZED)
     
@@ -99,19 +99,20 @@ class QuizQuestionList(generics.ListAPIView):
             queryset = queryset[:int(num_questions)]
         print(queryset)
 
-        return queryset
+        return 
     
 
 
 
-class QuizHistoryListCreateView(generics.ListCreateAPIView):
-    queryset = QuizHistory.objects.all()
-    serializer_class = QuizHistorySerializer
-    permission_classes = [IsAuthenticated]
 
-class QuizHistoryRetrieveView(generics.RetrieveAPIView):
-    queryset = QuizHistory.objects.all()
-    serializer_class = QuizHistorySerializer
-    permission_classes = [IsAuthenticated]
     
+from .models import QuestionHistory
+from .serializers import QuestionHistorySerializer
 
+class QuestionHistoryListCreateView(generics.ListCreateAPIView):
+    queryset = QuestionHistory.objects.all()
+    serializer_class = QuestionHistorySerializer
+
+class QuestionHistoryDetailView(generics.RetrieveUpdateDestroyAPIView):
+    queryset = QuestionHistory.objects.all()
+    serializer_class = QuestionHistorySerializer

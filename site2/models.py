@@ -14,9 +14,6 @@ class CustomUser(AbstractUser):
 
 
 
-
-
-
 class QuizQuestion(models.Model):
     _id = models.ObjectIdField(primary_key = True)
     category = models.CharField(max_length=100)
@@ -33,17 +30,15 @@ class QuizQuestion(models.Model):
 
 
 
-class Question(models.Model):
-    q_text = models.CharField(max_length=255)
-    is_correct = models.BooleanField() 
-    
 
-class QuizHistory(models.Model):
+class QuestionHistory(models.Model):
     user = models.ForeignKey(CustomUser, on_delete=models.CASCADE)
     domain = models.CharField(max_length=255)
+    difficulty_level = models.CharField(max_length=20)
     score = models.IntegerField()
+    attempted_questions = models.JSONField()
     submission_time = models.DateTimeField(auto_now_add=True)
-    attempted_questions = models.ManyToManyField(Question)
+
 
     def __str__(self):
-        return f"{self.user.username}'s Quiz History"
+        return f"{self.user.username}'s Question History"
