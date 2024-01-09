@@ -125,7 +125,7 @@ class QuestionHistoryDetailView(generics.ListAPIView):
 
         # Apply filters based on parameters
         if user_id:
-            queryset = queryset.filter(user_id=user_id)
+            queryset = queryset.filter(user=user_id)
 
         print(queryset)
 
