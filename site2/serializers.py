@@ -39,3 +39,5 @@ class QuestionHistorySerializer(serializers.ModelSerializer):
         model = QuestionHistory
         fields = ['id', 'user', 'domain', 'difficulty_level', 'score', 'attempted_questions','submission_time']
 
+    
+

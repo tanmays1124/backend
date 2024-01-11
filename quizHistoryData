@@ -1,0 +1,102 @@
+[
+  {
+    "user": 1,
+    "domain": "HTML",
+    "difficulty_level": "easy",
+    "score": 27,
+    "attempted_questions": [
+      {
+        "q_text": "What does HTML stand for?",
+        "is_correct": true
+      },
+      {
+        "q_text": "How to create a hyperlink in HTML?",
+        "is_correct": true
+      },
+      {
+        "q_text": "What is the purpose of the <head> tag?",
+        "is_correct": false
+      }
+    ]
+  },
+  {
+    "user": 1,
+    "domain": "Linux",
+    "difficulty_level": "medium",
+    "score": 20,
+    "attempted_questions": [
+      {
+        "q_text": "What is a shell in Linux?",
+        "is_correct": true
+      },
+      {
+        "q_text": "How to change file permissions in Linux?",
+        "is_correct": true
+      },
+      {
+        "q_text": "What is the purpose of the grep command?",
+        "is_correct": false
+      }
+    ]
+  },
+  {
+    "user": 1,
+    "domain": "MongoDb",
+    "difficulty_level": "difficult",
+    "score": 16,
+    "attempted_questions": [
+      {
+        "q_text": "What is sharding in MongoDB?",
+        "is_correct": true
+      },
+      {
+        "q_text": "Explain the concept of indexes in MongoDB.",
+        "is_correct": true
+      },
+      {
+        "q_text": "What is Map-Reduce in MongoDB?",
+        "is_correct": false
+      }
+    ]
+  },
+  {
+    "user": 1,
+    "domain": "SQL",
+    "difficulty_level": "easy",
+    "score": 25,
+    "attempted_questions": [
+      {
+        "q_text": "What is a primary key in SQL?",
+        "is_correct": true
+      },
+      {
+        "q_text": "How to delete records in SQL?",
+        "is_correct": true
+      },
+      {
+        "q_text": "What is the purpose of the ORDER BY clause?",
+        "is_correct": false
+      }
+    ]
+  },
+  {
+    "user": 1,
+    "domain": "HTML",
+    "difficulty_level": "difficult",
+    "score": 14,
+    "attempted_questions": [
+      {
+        "q_text": "What is the purpose of the <canvas> element in HTML?",
+        "is_correct": true
+      },
+      {
+        "q_text": "Explain the use of the <meta> tag.",
+        "is_correct": true
+      },
+      {
+        "q_text": "What is the difference between <div> and <span>?",
+        "is_correct": false
+      }
+    ]
+  }
+]

@@ -111,26 +111,37 @@ class QuestionHistoryListCreateView(generics.ListCreateAPIView):
     queryset = QuestionHistory.objects.all()
     serializer_class = QuestionHistorySerializer
 
-
+import json
+from collections import OrderedDict
 
 class QuestionHistoryDetailView(generics.ListAPIView):
     serializer_class = QuestionHistorySerializer
 
+    # def get_queryset(self):
+    #     queryset = QuestionHistory.objects.all()
+
+    #     # Get parameters from the request, default to None if not provided
+    #     user_id = self.request.query_params.get('user_id', None)
+
+
+    #     # Apply filters based on parameters
+    #     if user_id:
+    #         queryset = queryset.filter(user=user_id)
+
+    #     print(queryset)
+
+    #     return queryset
+    
+
     def get_queryset(self):
         queryset = QuestionHistory.objects.all()
-
-        # Get parameters from the request, default to None if not provided
         user_id = self.request.query_params.get('user_id', None)
-
-
-        # Apply filters based on parameters
         if user_id:
             queryset = queryset.filter(user=user_id)
-
-        print(queryset)
-
+        serialized_data = QuestionHistorySerializer(queryset, many=True).data
+        print(serialized_data)
         return queryset
-    
+        
 
 
 

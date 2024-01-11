@@ -35,7 +35,6 @@ class QuizQuestion(models.Model):
 
 class QuestionHistory(models.Model):
     user = models.IntegerField()
-    # user = models.ForeignKey(CustomUser, on_delete=models.CASCADE)
     domain = models.CharField(max_length=255)
     difficulty_level = models.CharField(max_length=20)
     score = models.IntegerField()
