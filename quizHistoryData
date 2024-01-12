@@ -1,6 +1,6 @@
 [
   {
-    "user": 1,
+    "user": 7,
     "domain": "HTML",
     "difficulty_level": "easy",
     "score": 27,
@@ -20,7 +20,7 @@
     ]
   },
   {
-    "user": 1,
+    "user": 7,
     "domain": "Linux",
     "difficulty_level": "medium",
     "score": 20,
@@ -40,7 +40,7 @@
     ]
   },
   {
-    "user": 1,
+    "user": 7,
     "domain": "MongoDb",
     "difficulty_level": "difficult",
     "score": 16,
@@ -60,7 +60,7 @@
     ]
   },
   {
-    "user": 1,
+    "user": 7,
     "domain": "SQL",
     "difficulty_level": "easy",
     "score": 25,
@@ -80,7 +80,7 @@
     ]
   },
   {
-    "user": 1,
+    "user": 7,
     "domain": "HTML",
     "difficulty_level": "difficult",
     "score": 14,
