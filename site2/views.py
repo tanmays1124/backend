@@ -111,8 +111,7 @@ class QuestionHistoryListCreateView(generics.ListCreateAPIView):
     queryset = QuestionHistory.objects.all()
     serializer_class = QuestionHistorySerializer
 
-import json
-from collections import OrderedDict
+
 
 class QuestionHistoryDetailView(generics.ListAPIView):
     serializer_class = QuestionHistorySerializer
