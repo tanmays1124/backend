@@ -8,11 +8,15 @@ from .serializers import UserSerializer
 from .models import QuizQuestion
 from .serializers import QuizQuestionSerializer
 from rest_framework.permissions import IsAuthenticated
-
+from .models import ResetToken
+from .serializers import ResetPasswordSerializer
+from django.core.mail import send_mail
+from django.template.loader import render_to_string
+from django.utils.html import strip_tags
 
 from rest_framework.authtoken.models import Token
 from django.contrib.auth import authenticate
-from rest_framework.decorators import api_view
+from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import status
 from django.core.exceptions import ObjectDoesNotExist
@@ -142,6 +146,36 @@ class QuestionHistoryDetailView(generics.ListAPIView):
     #     return queryset
         
 
+# myapp/views.py
+
+
+
+class ResetPasswordRequest(APIView):
+    def post(self, request):
+        serializer = ResetPasswordSerializer(data=request.data)
+        if serializer.is_valid():
+            email = serializer.validated_data['email']
+            user = CustomUser.objects.filter(email=email).first()
+
+            if user:
+                # Generate and save reset token
+                reset_token = "generate_your_token_here"  # You should use a secure method to generate tokens
+                ResetToken.objects.create(user=user, token=reset_token)
+                subject = 'Password Reset'
+                reset_link = f'http://example.com/reset-password/{reset_token}/'  # Update with your actual reset link
+
+                # Create the email message
+                message = render_to_string('reset_password_email.html', {'reset_link': reset_link})
+                plain_message = strip_tags(message)
+
+                # Send the email
+                send_mail(subject, plain_message, 'from@example.com', [user.email], html_message=message)
+
+                return Response({'message': 'Reset email sent successfully'}, status=status.HTTP_200_OK)
+            else:
+                return Response({'error': 'User not found'}, status=status.HTTP_404_NOT_FOUND)
+
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 
 
@@ -154,29 +188,3 @@ class QuestionHistoryDetailView(generics.ListAPIView):
 
 
 
-
-
-
-
-
-    
-# from .models import QuestionHistory
-# from .serializers import QuestionHistorySerializer
-
-
-# class QuestionHistoryDetailView(generics.RetrieveUpdateDestroyAPIView):
-#     # queryset = QuestionHistory.objects.all()
-#     # serializer_class = QuestionHistorySerializer
-#     def get(self, request, user_id):
-#         try:
-#             # Retrieve question history for the specified user ID
-#             user_id = self.request.query_params.get('user', None)
-#             if user_id:
-#                 queryset = queryset.filter(user_id=user_id)
-
-#             # question_history = QuestionHistory.objects.filter(user_id=user_id)
-#             # serializer_class = QuestionHistorySerializer
-#             # serializer = QuestionHistorySerializer(question_history, many=True)
-#             return Response(serializer.data, status=status.HTTP_200_OK)
-#         except Exception as e:
-#             return Response({"error": str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)

@@ -41,3 +41,6 @@ class QuestionHistorySerializer(serializers.ModelSerializer):
 
     
 
+
+class ResetPasswordSerializer(serializers.Serializer):
+    email = serializers.EmailField()
