@@ -130,7 +130,7 @@ def user_logout(request):
             return Response({'message': 'Successfully logged out.'}, status=status.HTTP_200_OK)
         except Exception as e:
             return Response({'error': str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
-        
+    
 
 class QuizQuestionList(generics.ListAPIView):
     serializer_class = QuizQuestionSerializer
@@ -247,4 +247,17 @@ class CustomUserView(generics.ListAPIView):
 
 
 
+    
 
+@api_view(['PUT'])
+@permission_classes([IsAuthenticated])
+def update_user_profile(request):
+    user = request.user  # Get the authenticated user
+
+    serializer = UserSerializer(user, data=request.data, partial=True)
+
+    if serializer.is_valid():
+        serializer.save()
+        return Response(serializer.data)
+    return Response(serializer.errors, status=400)
+        
