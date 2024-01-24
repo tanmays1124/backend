@@ -178,12 +178,23 @@ class ResetPasswordRequest(APIView):
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 
+class CustomUserView(generics.ListAPIView):
+    serializer_class = UserSerializer
+
+    def get_queryset(self):
+        queryset = CustomUser.objects.all()
+
+        # Get parameters from the request, default to None if not provided
+        user_id = self.request.query_params.get('user_id', None)
 
 
+        # Apply filters based on parameters
+        if user_id:
+            queryset = queryset.filter(id=user_id)
 
+        print(queryset)
 
-
-
+        return queryset
 
 
 

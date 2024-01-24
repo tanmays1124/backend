@@ -15,7 +15,7 @@ Including another URLconf
 """
 from django.urls import path
 from .views import register_user, user_login, user_logout, QuizQuestionList
-from .views import QuestionHistoryListCreateView, QuestionHistoryDetailView, ResetPasswordRequest
+from .views import QuestionHistoryListCreateView, QuestionHistoryDetailView, ResetPasswordRequest, CustomUserView
 
 
 urlpatterns = [
@@ -26,7 +26,7 @@ urlpatterns = [
     path('questionhistorycreate/', QuestionHistoryListCreateView.as_view(), name='questionhistory-list-create'),
     path('questionhistoryget/', QuestionHistoryDetailView.as_view(), name='questionhistory-detail'),
     path('resetpassword/', ResetPasswordRequest.as_view(), name='reset_password'),
-
+    path('userprofile/',CustomUserView.as_view(),name='userprofile'),
 
 ]
 
