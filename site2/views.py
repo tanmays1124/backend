@@ -1,4 +1,6 @@
-from django.shortcuts import render
+from django.http import JsonResponse
+from django.shortcuts import get_object_or_404, render
+from rest_framework.decorators import api_view, permission_classes
 
 
 from rest_framework import status, generics
@@ -8,7 +10,7 @@ from .serializers import UserSerializer
 from .models import QuizQuestion
 from .serializers import QuizQuestionSerializer
 from rest_framework.permissions import IsAuthenticated
-from .models import ResetToken
+from .models import ResetToken, CustomUser
 from .serializers import ResetPasswordSerializer
 from django.core.mail import send_mail
 from django.template.loader import render_to_string
@@ -20,7 +22,8 @@ from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import status
 from django.core.exceptions import ObjectDoesNotExist
-from .models import CustomUser
+
+from .utils import generate_reset_token 
 
 @api_view(['POST'])
 def register_user(request):
@@ -62,6 +65,52 @@ def user_login(request):
 
         return Response({'error': 'Invalid credentials'}, status=status.HTTP_401_UNAUTHORIZED)
     
+
+
+# class UserProfile(generics.ListAPIView):
+    
+#     serializer_class = UserSerializer
+#     def get_queryset(self):
+#         # userid = request.data.get('user_id')
+            
+#         queryset = CustomUser.objects.all()
+        
+#         user = self.request.query_params.get('user_id', None)
+
+#         if user:
+#             queryset = queryset.filter(id=user)
+#         return user
+
+
+@api_view(['GET'])
+def get_user_details(request, user_id):
+    # Ensure that the user making the request is authenticated
+
+    # Retrieve the user object from the database or return 404 if not found
+    user = get_object_or_404(CustomUser, id=user_id)
+
+    # Serialize the user data
+    serializer = UserSerializer(user)
+
+    # Return the serialized data as a JSON response
+    return Response(serializer.data)
+
+
+
+
+@api_view(['PUT'])
+@permission_classes([IsAuthenticated])
+
+def update_user_profile(request):
+    user = request.user  # Get the authenticated user
+
+    serializer = UserSerializer(user, data=request.data, partial=True)
+
+    if serializer.is_valid():
+        serializer.save()
+        return Response(serializer.data)
+    return Response(serializer.errors, status=400)
+
 
 
     
@@ -159,10 +208,10 @@ class ResetPasswordRequest(APIView):
 
             if user:
                 # Generate and save reset token
-                reset_token = "generate_your_token_here"  # You should use a secure method to generate tokens
+                reset_token = generate_reset_token()
                 ResetToken.objects.create(user=user, token=reset_token)
                 subject = 'Password Reset'
-                reset_link = f'http://example.com/reset-password/{reset_token}/'  # Update with your actual reset link
+                reset_link = f'http://127.0.0.1:8000/reset-password/{reset_token}/'  # Update with your actual reset link
 
                 # Create the email message
                 message = render_to_string('reset_password_email.html', {'reset_link': reset_link})
