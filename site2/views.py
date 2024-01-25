@@ -15,6 +15,8 @@ from .serializers import ResetPasswordSerializer
 from django.core.mail import send_mail
 from django.template.loader import render_to_string
 from django.utils.html import strip_tags
+from rest_framework.authtoken.views import ObtainAuthToken
+
 
 from rest_framework.authtoken.models import Token
 from django.contrib.auth import authenticate
@@ -33,6 +35,7 @@ def register_user(request):
 
         if serializer.is_valid():
             serializer.save()
+            
             return Response(serializer.data, status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
     
@@ -67,49 +70,63 @@ def user_login(request):
     
 
 
-# class UserProfile(generics.ListAPIView):
-    
-#     serializer_class = UserSerializer
-#     def get_queryset(self):
-#         # userid = request.data.get('user_id')
-            
-#         queryset = CustomUser.objects.all()
-        
-#         user = self.request.query_params.get('user_id', None)
 
-#         if user:
-#             queryset = queryset.filter(id=user)
-#         return user
+
+class CustomAuthToken(ObtainAuthToken):
+    def post(self, request, *args, **kwargs):
+        response = super(CustomAuthToken, self).post(request, *args, **kwargs)
+        token = Token.objects.get(key=response.data['token'])
+        return Response({'token': token.key, 'user_id': token.user.id})
 
 
 @api_view(['GET'])
 def get_user_details(request, user_id):
-    # Ensure that the user making the request is authenticated
 
-    # Retrieve the user object from the database or return 404 if not found
     user = get_object_or_404(CustomUser, id=user_id)
 
-    # Serialize the user data
     serializer = UserSerializer(user)
+    # return Response({'id':serializer.data.id, 'username': serializer.data.username, 'first_name': serializer.data.first_name, 'last_name': serializer.data.last_name, 'email': serializer.data.email, 'photo':photo_data})
 
-    # Return the serialized data as a JSON response
     return Response(serializer.data)
 
 
+custom_auth_token = CustomAuthToken.as_view()
 
 
-@api_view(['PUT'])
-@permission_classes([IsAuthenticated])
 
-def update_user_profile(request):
-    user = request.user  # Get the authenticated user
 
-    serializer = UserSerializer(user, data=request.data, partial=True)
+from django.http import JsonResponse
+from django.views.decorators.csrf import csrf_exempt
+from .models import CustomUser  # Import your model
+import json
 
-    if serializer.is_valid():
-        serializer.save()
-        return Response(serializer.data)
-    return Response(serializer.errors, status=400)
+@csrf_exempt  # Disable CSRF protection for simplicity (enable only in development)
+def update_model(request, userid):
+    if request.method == 'POST':
+        try:
+            # Parse incoming JSON data
+            data = json.loads(request.body)
+            
+            # Retrieve the model instance to update
+            instance = CustomUser.objects.get(id=userid)  # Assuming user_id is a field in your model
+
+            # Update the model instance
+            instance.first_name = data.get('first_name', instance.first_name)
+            instance.last_name = data.get('last_name', instance.last_name)
+            instance.email = data.get('email', instance.email)
+            # Update other fields similarly
+            
+            # Save the updated instance
+            instance.save()
+
+            return JsonResponse({'message': 'Model updated successfully'})
+        except CustomUser.DoesNotExist:
+            return JsonResponse({'error': 'Model not found'}, status=404)
+        except Exception as e:
+            return JsonResponse({'error': str(e)}, status=500)
+    else:
+        return JsonResponse({'error': 'Only POST requests are allowed'}, status=405)
+
 
 
 
@@ -185,17 +202,7 @@ class QuestionHistoryDetailView(generics.ListAPIView):
         return queryset
     
 
-    # def get_queryset(self):
-    #     queryset = QuestionHistory.objects.all()
-    #     user_id = self.request.query_params.get('user_id', None)
-    #     if user_id:
-    #         queryset = queryset.filter(user=user_id)
-    #     serialized_data = QuestionHistorySerializer(queryset, many=True).data
-    #     print(serialized_data)
-    #     return queryset
-        
 
-# myapp/views.py
 
 
 
@@ -261,3 +268,51 @@ def update_user_profile(request):
         return Response(serializer.data)
     return Response(serializer.errors, status=400)
         
+
+
+
+
+
+
+# views.py
+from rest_framework import status
+from rest_framework.response import Response
+from rest_framework.decorators import api_view
+from .models import CustomUser
+from .serializers import UserSerializer
+
+@api_view(['POST'])
+def upload_photo(request, userid):
+    try:
+        user = CustomUser.objects.get(id=userid)
+    except CustomUser.DoesNotExist:
+        return Response({'error': 'User does not exist'}, status=status.HTTP_404_NOT_FOUND)
+
+    if 'photo' not in request.FILES:
+        return Response({'error': 'No photo provided'}, status=status.HTTP_400_BAD_REQUEST)
+
+    user.photo = request.FILES['photo']
+    user.save()
+
+    serializer = UserSerializer(user)
+    return Response(serializer.data)
+
+
+from django.http import HttpResponse
+from django.conf import settings
+import os
+
+@api_view(['GET'])
+def get_user_photo(request, user_id):
+    user = get_object_or_404(CustomUser, id=user_id)
+    photo_path = user.photo.path  # Assuming 'photo' is a FileField in your CustomUser model
+    
+    # Open the photo file and read its content
+    with open(photo_path, 'rb') as f:
+        photo_data = f.read()
+
+    # Set the appropriate content type for the photo
+    content_type = "image/*"  # Adjust according to your photo format
+
+    # Return the photo data as an HTTP response
+    return HttpResponse(photo_data, content_type=content_type)
