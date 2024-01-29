@@ -14,7 +14,7 @@ Including another URLconf
     2. Add a URL to urlpatterns:  path('blog/', include('blog.urls'))
 """
 from django.urls import path
-from .views import register_user, user_login, user_logout, QuizQuestionList, get_user_details
+from .views import UserDeleteView, register_user, user_login, user_logout, QuizQuestionList, get_user_details
 from .views import QuestionHistoryListCreateView, QuestionHistoryDetailView, ResetPasswordRequest, update_model, upload_photo, get_user_photo
 
 
@@ -29,7 +29,9 @@ urlpatterns = [
     path('userprofile/<int:user_id>',  get_user_details, name='Profile details'),
     path('update/<int:userid>',update_model, name ='Update Profile'),
     path('upload/<int:userid>',upload_photo, name="upload photo"),
-    path('getphoto/<int:userid>/',get_user_photo, name = "Photo")
+    # path('getphoto/<int:userid>/',get_user_photo, name = "Photo"),
+    path('delete/<int:user_id>', UserDeleteView.as_view(), name='delete_user'),
+
 ]
 
 # urls.py

@@ -1,5 +1,6 @@
 from django.http import JsonResponse
 from django.shortcuts import get_object_or_404, render
+from django.views.generic import View
 from rest_framework.decorators import api_view, permission_classes
 
 
@@ -147,7 +148,21 @@ def user_logout(request):
             return Response({'message': 'Successfully logged out.'}, status=status.HTTP_200_OK)
         except Exception as e:
             return Response({'error': str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
-    
+        
+
+
+
+class UserDeleteView(View):
+    def destroy(self, request, user_id=None):
+        try:
+            user = CustomUser.objects.get(id=user_id)
+            user.delete()
+            return Response(status=status.HTTP_204_NO_CONTENT) 
+        except CustomUser.DoesNotExist:
+            return Response(status=status.HTTP_404_NOT_FOUND)
+
+
+
 
 class QuizQuestionList(generics.ListAPIView):
     serializer_class = QuizQuestionSerializer
