@@ -1,6 +1,8 @@
 from django.http import JsonResponse
 from django.shortcuts import get_object_or_404, render
 from rest_framework.decorators import api_view, permission_classes
+import logging
+from django.contrib.auth.hashers import make_password
 
 
 from rest_framework import status, generics
@@ -27,18 +29,51 @@ from django.core.exceptions import ObjectDoesNotExist
 
 from .utils import generate_reset_token 
 
+# @api_view(['POST'])
+# def register_user(request):
+#     if request.method == 'POST':
+#         print(request.data)
+#         serializer = UserSerializer(data=request.data)
+#         try:
+#             if serializer.is_valid():
+#                 serializer.save()
+#                 return Response(serializer.data, status=status.HTTP_201_CREATED)
+#         except Exception as e:
+#             # return Response({'error': 'Username already exists'}, status=status.HTTP_400_BAD_REQUEST)
+#             return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+    
+
+
 @api_view(['POST'])
 def register_user(request):
     if request.method == 'POST':
-        serializer = UserSerializer(data=request.data)
         print(request.data)
 
-        if serializer.is_valid():
-            serializer.save()
-            
-            return Response(serializer.data, status=status.HTTP_201_CREATED)
-        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
-    
+        username = request.data["username"]
+        email=request.data["email"]
+        first_name=request.data["first_name"]
+        last_name=request.data["last_name"]
+        password=request.data["password"]
+
+        if CustomUser.objects.filter(email=email):
+            return Response({'error': "Email Already Exists"}, status=status.HTTP_400_BAD_REQUEST)
+        
+        if CustomUser.objects.filter(username=username):
+            return Response({'error': "Username Already Exists"},status=status.HTTP_400_BAD_REQUEST)
+        
+
+        user = CustomUser.objects.create(username=username, email=email, password=make_password(password))
+        user.save()
+        
+        
+
+        return Response({"success":"Profile created"}, status=status.HTTP_201_CREATED)
+
+
+
+
+
+
 
 
 
