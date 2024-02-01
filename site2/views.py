@@ -63,7 +63,7 @@ def register_user(request):
             return Response({'error': "Username Already Exists"},status=status.HTTP_400_BAD_REQUEST)
         
 
-        user = CustomUser.objects.create(username=username, email=email, password=make_password(password))
+        user = CustomUser.objects.create(username=username, email=email, first_name=first_name, last_name=last_name, password=make_password(password))
         user.save()
         
         
@@ -122,7 +122,7 @@ def get_user_details(request, user_id):
 
     serializer = UserSerializer(user)
     # return Response({'id':serializer.data.id, 'username': serializer.data.username, 'first_name': serializer.data.first_name, 'last_name': serializer.data.last_name, 'email': serializer.data.email, 'photo':photo_data})
-
+    print(serializer.data)
     return Response(serializer.data)
 
 
