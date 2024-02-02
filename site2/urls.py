@@ -13,9 +13,10 @@ Including another URLconf
     1. Import the include() function: from django.urls import include, path
     2. Add a URL to urlpatterns:  path('blog/', include('blog.urls'))
 """
+# from django import views
 from django.urls import path
-from .views import UserDeleteView, register_user, user_login, user_logout, QuizQuestionList, get_user_details
-from .views import QuestionHistoryListCreateView, QuestionHistoryDetailView, ResetPasswordRequest, update_model, upload_photo, get_user_photo
+from .views import UserDeleteView, register_user, user_login, user_logout, QuizQuestionList, get_user_details,forgot_password, reset_password
+from .views import QuestionHistoryListCreateView, QuestionHistoryDetailView, ResetPasswordRequest, update_model, upload_photo, deleteUserProfile,get_user_photo
 
 
 urlpatterns = [
@@ -25,12 +26,17 @@ urlpatterns = [
     path('questions/', QuizQuestionList.as_view(),name='questions'),
     path('questionhistorycreate/', QuestionHistoryListCreateView.as_view(), name='questionhistory-list-create'),
     path('questionhistoryget/', QuestionHistoryDetailView.as_view(), name='questionhistory-detail'),
-    path('resetpassword/', ResetPasswordRequest.as_view(), name='reset_password'),
+    # path('resetpassword/', ResetPasswordRequest.as_view(), name='reset_password'),
     path('userprofile/<int:user_id>',  get_user_details, name='Profile details'),
     path('update/<int:userid>',update_model, name ='Update Profile'),
     path('upload/<int:userid>',upload_photo, name="upload photo"),
     # path('getphoto/<int:userid>/',get_user_photo, name = "Photo"),
-    path('delete/<int:user_id>', UserDeleteView.as_view(), name='delete_user'),
+    path('delete/<int:user_id>', deleteUserProfile, name='delete_user'),
+
+
+
+    path('forgot_password/',forgot_password, name='forgot_password'),
+    path('reset_password/<str:token>/', reset_password, name='reset_password'),
 
 ]
 

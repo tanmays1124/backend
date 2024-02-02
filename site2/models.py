@@ -30,6 +30,11 @@ class QuizQuestion(models.Model):
 
     def __str__(self):
         return f"{self.category} - {self.difficulty} - {self.question}"
+    
+
+class UserToken(models.Model):
+    email = models.EmailField(unique=True, default="default_mail")
+    reset_password_token = models.CharField(max_length=100,blank=True,null=True)
 
 
 
