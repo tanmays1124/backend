@@ -15,7 +15,7 @@ Including another URLconf
 """
 # from django import views
 from django.urls import path
-from .views import UserDeleteView, register_user, user_login, user_logout, QuizQuestionList, get_user_details,forgot_password, reset_password
+from .views import UserDeleteView, register_user, user_login, user_logout, QuizQuestionList, get_user_details,PasswordResetAPI
 from .views import QuestionHistoryListCreateView, QuestionHistoryDetailView, ResetPasswordRequest, update_model, upload_photo, deleteUserProfile,get_user_photo
 
 
@@ -34,9 +34,10 @@ urlpatterns = [
     path('delete/<int:user_id>', deleteUserProfile, name='delete_user'),
 
 
+    path('forgot/',PasswordResetAPI.as_view(), name = "forgot-password"),
 
-    path('forgot_password/',forgot_password, name='forgot_password'),
-    path('reset_password/<str:token>/', reset_password, name='reset_password'),
+    # path('forgot_password/',forgot_password, name='forgot_password'),
+    # path('reset_password/<str:token>/', reset_password, name='reset_password'),
 
 ]
 

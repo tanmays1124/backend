@@ -369,56 +369,56 @@ def get_user_photo(request, user_id):
     return HttpResponse(photo_data, content_type=content_type)
 
 #Added Manually
-from django.utils.crypto import get_random_string
-from django.contrib.sites.shortcuts import get_current_site
+# from django.utils.crypto import get_random_string
+# from django.contrib.sites.shortcuts import get_current_site
 
-def forgot_password(request):
-    if request.method == 'POST':
-        email = request.POST.get('email', '')
-        user = CustomUser.objects.filter(email=email).first()
-        if user:
-            # Generate a unique token and save it to the user model
-            token = get_random_string(length=32)
-            user_token = UserToken.objects.create(email=email, reset_password_token=token)
-             # Get the current site's domain
-            current_site = get_current_site(request)
-            domain = current_site.domain
+# def forgot_password(request):
+#     if request.method == 'POST':
+#         email = request.POST.get('email', '')
+#         user = CustomUser.objects.filter(email=email).first()
+#         if user:
+#             # Generate a unique token and save it to the user model
+#             token = get_random_string(length=32)
+#             user_token = UserToken.objects.create(email=email, reset_password_token=token)
+#              # Get the current site's domain
+#             current_site = get_current_site(request)
+#             domain = current_site.domain
             
-            # Construct the reset link dynamically
-            reset_link = f"http://{domain}/reset_password/{token}/"
-            send_mail('Reset Password', f'Click the following link to reset your password: {reset_link}',
-                      settings.DEFAULT_FROM_EMAIL, [user.email], fail_silently=False)
-            return render(request, 'authentication/password_reset_done.html')
-        else:
-            return render(request, 'authentication/password_reset_failed.html')
-    return render(request, 'authentication/forgot_password.html')
+#             # Construct the reset link dynamically
+#             reset_link = f"http://{domain}/reset_password/{token}/"
+#             send_mail('Reset Password', f'Click the following link to reset your password: {reset_link}',
+#                       settings.DEFAULT_FROM_EMAIL, [user.email], fail_silently=False)
+#             return render(request, 'authentication/password_reset_done.html')
+#         else:
+#             return render(request, 'authentication/password_reset_failed.html')
+#     return render(request, 'authentication/forgot_password.html')
 
 
 
 
 
-def reset_password(request, token):
-    user_token = UserToken.objects.filter(reset_password_token=token).first()
-    if not user_token:
-        # Handle invalid or expired token
-        return render(request, 'authentication/password_reset_invalid.html')
-    if request.method == 'POST':
-        new_password = request.POST.get('new_password', '')
-        confirm_new_password = request.POST.get('confirm_new_password', '')
-        if new_password != confirm_new_password:
-            error_message = "Passwords do not match."
-            return render(request, 'authentication/reset_password.html', {'error_message': error_message, 'token': token})
-        # Update the user's password and reset the token
-        user = CustomUser.objects.get(email=user_token.email)
-        user.set_password(new_password)
-        user.save()
+# def reset_password(request, token):
+#     user_token = UserToken.objects.filter(reset_password_token=token).first()
+#     if not user_token:
+#         # Handle invalid or expired token
+#         return render(request, 'authentication/password_reset_invalid.html')
+#     if request.method == 'POST':
+#         new_password = request.POST.get('new_password', '')
+#         confirm_new_password = request.POST.get('confirm_new_password', '')
+#         if new_password != confirm_new_password:
+#             error_message = "Passwords do not match."
+#             return render(request, 'authentication/reset_password.html', {'error_message': error_message, 'token': token})
+#         # Update the user's password and reset the token
+#         user = CustomUser.objects.get(email=user_token.email)
+#         user.set_password(new_password)
+#         user.save()
 
-        # if user.email == user_token.email:
-            # user_token.email = None
-            # user_token.reset_password_token = None
-        user_token.delete()
-        return render(request, 'authentication/password_reset_complete.html')
-    return render(request, 'authentication/reset_password.html', {'token': token})
+#         # if user.email == user_token.email:
+#             # user_token.email = None
+#             # user_token.reset_password_token = None
+#         user_token.delete()
+#         return render(request, 'authentication/password_reset_complete.html')
+#     return render(request, 'authentication/reset_password.html', {'token': token})
 
 
 
@@ -438,3 +438,35 @@ def deleteUserProfile(request, user_id):
         return JsonResponse({'error': 'User does not exist.'}, status=404)
     except Exception as e:
         return JsonResponse({'error': str(e)}, status=500)
+    
+
+
+from django.contrib.auth.tokens import PasswordResetTokenGenerator
+from django.utils.http import urlsafe_base64_encode, urlsafe_base64_decode
+from django.utils.encoding import force_bytes
+from django.core.mail import send_mail
+
+
+
+class PasswordResetAPI(View):
+    def get(self, request):
+        return JsonResponse({'error': 'GET method not supported for this endpoint.'}, status=405)
+    
+    def post(self, request):
+        email = request.POST.get('email')
+        user = CustomUser.objects.filter(email=email).first()
+        if user:
+            token_generator = PasswordResetTokenGenerator()
+            uid = urlsafe_base64_encode(force_bytes(user.pk))
+            token = token_generator.make_token(user)
+            reset_link = f'http://127.0.0.1:8000/reset-password/{uid}/{token}/'
+            send_mail(
+                'Password Reset',
+                f'Please click the link to reset your password: {reset_link}',
+                'sampleuser788@gmail.com',
+                [email],
+                fail_silently=False,
+            )
+            return JsonResponse({'message': 'Password reset link sent successfully.'})
+        else:
+            return JsonResponse({'error': 'User not found.'}, status=404)
