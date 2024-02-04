@@ -2,7 +2,6 @@ from django.http import JsonResponse
 from django.shortcuts import get_object_or_404, render
 from django.views.generic import View
 from rest_framework.decorators import api_view, permission_classes
-import logging
 from django.contrib.auth.hashers import make_password
 from .models import UserToken
 
@@ -20,6 +19,8 @@ from django.core.mail import send_mail
 from django.template.loader import render_to_string
 from django.utils.html import strip_tags
 from rest_framework.authtoken.views import ObtainAuthToken
+from django.contrib.auth.tokens import default_token_generator
+
 
 
 from rest_framework.authtoken.models import Token
@@ -173,6 +174,8 @@ from rest_framework.decorators import api_view, permission_classes
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 from rest_framework import status
+from django.db.models import Q
+
 
 @api_view(['POST'])
 @permission_classes([IsAuthenticated])
@@ -210,17 +213,34 @@ class QuizQuestionList(generics.ListAPIView):
         category = self.request.query_params.get('category', None)
         num_questions = self.request.query_params.get('num_questions', None)
         difficulty = self.request.query_params.get('difficulty', None)
-
+        user_id = self.request.query_params.get('user_id',None)
         # Apply filters based on parameters
         if category:
             queryset = queryset.filter(category=category)
         if difficulty:
             queryset = queryset.filter(difficulty=difficulty)
+
+        
+        # Exclude questions already attempted by the user
+        if user_id:
+            user_history = QuestionHistory.objects.filter(user=user_id)
+            attempted_questions_texts = []
+            for history in user_history:
+                for attempted_question in history.attempted_questions:
+                    attempted_questions_texts.append(attempted_question['q_text'])
+            # Create a Q object to match any of the attempted questions
+            query = Q()
+            for question_text in attempted_questions_texts:
+                query |= Q(question=question_text)
+            queryset = queryset.exclude(query)
+
+        # Limit the number of questions
         if num_questions:
             queryset = queryset[:int(num_questions)]
         print(queryset)
 
         return queryset
+    
     
 
     
@@ -428,7 +448,7 @@ def get_user_photo(request, user_id):
 
 
 
-
+@api_view(['POST'])
 def deleteUserProfile(request, user_id):
     try:
         user = CustomUser.objects.get(id=user_id)
@@ -442,31 +462,101 @@ def deleteUserProfile(request, user_id):
 
 
 from django.contrib.auth.tokens import PasswordResetTokenGenerator
-from django.utils.http import urlsafe_base64_encode, urlsafe_base64_decode
-from django.utils.encoding import force_bytes
+from django.utils.http import  urlsafe_base64_decode
+# from django.utils.encoding import force_bytes
 from django.core.mail import send_mail
 
 
 
-class PasswordResetAPI(View):
-    def get(self, request):
-        return JsonResponse({'error': 'GET method not supported for this endpoint.'}, status=405)
+# class PasswordResetAPI(View):
+#     def get(self, request):
+#         return JsonResponse({'error': 'GET method not supported for this endpoint.'}, status=405)
     
-    def post(self, request):
+#     def post(self, request):
+#         email = request.POST.get('email')
+#         user = CustomUser.objects.filter(email=email).first()
+#         if user:
+#             token_generator = PasswordResetTokenGenerator()
+#             uid = urlsafe_base64_encode(force_bytes(user.pk))
+#             print(uid)
+#             token = token_generator.make_token(user)
+#             reset_link = f'http://127.0.0.1:8000/reset-password/{uid}/{token}/'
+#             send_mail(
+#                 'Password Reset',
+#                 f'Please click the link to reset your password: {reset_link}',
+#                 'sampleuser788@gmail.com',
+#                 [email],
+#                 fail_silently=False,
+#             )
+#             return JsonResponse({'message': 'Password reset link sent successfully.'})
+#         else:
+#             return JsonResponse({'error': 'User not found.'}, status=404)
+        
+
+
+
+
+
+
+from django.urls import reverse
+import base64
+
+
+
+
+@csrf_exempt
+def forgot_password(request):
+    if request.method == 'POST':
         email = request.POST.get('email')
-        user = CustomUser.objects.filter(email=email).first()
-        if user:
-            token_generator = PasswordResetTokenGenerator()
-            uid = urlsafe_base64_encode(force_bytes(user.pk))
-            token = token_generator.make_token(user)
-            reset_link = f'http://127.0.0.1:8000/reset-password/{uid}/{token}/'
-            send_mail(
-                'Password Reset',
-                f'Please click the link to reset your password: {reset_link}',
-                'sampleuser788@gmail.com',
-                [email],
-                fail_silently=False,
-            )
-            return JsonResponse({'message': 'Password reset link sent successfully.'})
+        user = get_object_or_404(CustomUser, email=email)
+        token = default_token_generator.make_token(user)
+        uid_bytes = str(user.pk).encode('utf-8')
+        uid = base64.urlsafe_b64encode(uid_bytes).decode('utf-8')
+        print(user.pk,uid)
+
+        reset_link = request.build_absolute_uri(
+            reverse('reset_password') + f'?uid={uid}&token={token}'
+        )
+        send_mail(
+            'Reset Your Password',
+            f'Click the following link to reset your password: {reset_link}',
+            'from@example.com',
+            [email],
+            fail_silently=False,
+        )
+        return render(request, 'mail_sent.html',{'email':email})
+    elif request.method == 'GET':
+        # Handle GET request if needed, for example, you can render a form to collect email
+        return render(request, 'get_email.html')
+
+    else:
+        return JsonResponse({'error': 'Invalid request method.'}, status=400)
+
+@csrf_exempt
+def reset_password(request):
+    if request.method == 'POST':
+        print(request.GET)
+
+        uid = request.POST.get('uid')
+        token = request.POST.get('token')
+        print("a",uid,token)
+
+        user_id = urlsafe_base64_decode(uid).decode('utf-8')
+        user = CustomUser.objects.get(pk=user_id)
+        if default_token_generator.check_token(user, token):
+            new_password = request.POST.get('new_password')
+            user.set_password(new_password)
+            user.save()
+            return render(request, 'success.html')
+
         else:
-            return JsonResponse({'error': 'User not found.'}, status=404)
+            return JsonResponse({'error': 'Invalid or expired reset token.'}, status=400)
+    elif request.method == 'GET':
+        print(request.GET)
+        # Handle GET request if needed, for example, you can render a form to reset password
+        uid = request.GET['uid']
+        token = request.GET['token']
+        return render(request, 'new.html',{"uid":uid,"token":token})
+
+    else:
+        return JsonResponse({'error': 'Invalid request method.'}, status=400)

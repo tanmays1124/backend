@@ -1,0 +1,10 @@
+<html>
+    <body>
+        <form ation="{% url 'forgot_password' %}" method="post">
+            {% csrf_token %}
+
+        <input placeholder="Email" type="email" name="email" class="email" required>
+        <button type="submit">Submit</button>
+        </form>
+    </body>
+    </html>

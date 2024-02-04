@@ -150,7 +150,7 @@ REST_FRAMEWORK = {
 CORS_ALLOW_ALL_ORIGINS = True
 
 CORS_ALLOWED_ORIGINS = [
-    "http://localhost:3000",  # Replace with the origin of your React app
+    "http://localhost:3000", # Replace with the origin of your React app
 ]
 
 EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'

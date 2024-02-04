@@ -1,0 +1,22 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Reset Password</title>
+</head>
+<body>
+    <h1>Reset Your Password</h1>
+    <form action="{% url 'reset_password' %}" method="POST">
+        {% csrf_token %}
+        <input type="hidden" name="uid" value="{{ uid }}">
+        <input type="hidden" name="token" value="{{ token }}">
+        <label for="new_password">New Password:</label><br>
+        <input type="password" id="new_password" name="new_password"><br>
+        <label for="confirm_password">Confirm Password:</label><br>
+        <input type="password" id="confirm_password" name="confirm_password"><br>
+        <button type="submit">Reset Password</button>
+    </form>
+</body>
+</html>
