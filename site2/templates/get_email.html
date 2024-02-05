@@ -1,10 +1,62 @@
-<html>
-    <body>
-        <form ation="{% url 'forgot_password' %}" method="post">
-            {% csrf_token %}
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background: linear-gradient(to bottom, #fefdffe1, #023252);
+            margin: 0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
+        }
 
-        <input placeholder="Email" type="email" name="email" class="email" required>
-        <button type="submit">Submit</button>
+        .prompt-container {
+            text-align: center;
+            color: #fff;
+        }
+
+        h1 {
+            color: #043161;
+        }
+
+        p {
+            color: #fff;
+            margin-top: 10px;
+        }
+
+        input {
+            padding: 10px;
+            margin: 10px;
+            border: none;
+            border-radius: 5px;
+        }
+
+        button {
+            padding: 10px;
+            background-color: #007bff;
+            color: #fff;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+
+        button:hover {
+            background-color: #0056b3;
+        }
+    </style>
+</head>
+<body>
+    <div class="prompt-container">
+        <h1>Forgot Your Password?</h1>
+        <p>No worries! Enter your email address below, and we'll send you a link to reset your password.</p>
+        <form action="{% url 'forgot_password' %}" method="post">
+            {% csrf_token %}
+            <input placeholder="Email" type="email" name="email" class="email" required>
+            <button type="submit">Submit</button>
         </form>
-    </body>
-    </html>
+    </div>
+</body>
+</html>

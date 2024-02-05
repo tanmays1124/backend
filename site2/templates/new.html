@@ -5,17 +5,67 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Reset Password</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background: linear-gradient(to bottom, #fefdffe1, #023252);
+            margin: 0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
+            color: #fff;
+            text-align: center;
+        }
+
+        h1 {
+            color: #043161;
+        }
+
+        form {
+            margin-top: 20px;
+        }
+
+        label {
+            color: #043161;
+            display: block;
+            margin-bottom: 5px;
+        }
+
+        input {
+            width: 100%;
+            padding: 8px;
+            margin-bottom: 15px;
+            box-sizing: border-box;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+        }
+
+        button {
+            background-color: #007bff;
+            color: #fff;
+            padding: 10px 20px;
+            font-size: 16px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+
+        button:hover {
+            background-color: #0056b3;
+        }
+    </style>
 </head>
 <body>
-    <h1>Reset Your Password</h1>
     <form action="{% url 'reset_password' %}" method="POST">
         {% csrf_token %}
+        <h1>Reset Your Password</h1>
         <input type="hidden" name="uid" value="{{ uid }}">
         <input type="hidden" name="token" value="{{ token }}">
         <label for="new_password">New Password:</label><br>
-        <input type="password" id="new_password" name="new_password"><br>
+        <input type="password" id="new_password" name="new_password" required><br>
         <label for="confirm_password">Confirm Password:</label><br>
-        <input type="password" id="confirm_password" name="confirm_password"><br>
+        <input type="password" id="confirm_password" name="confirm_password" required><br>
         <button type="submit">Reset Password</button>
     </form>
 </body>
