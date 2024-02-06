@@ -218,7 +218,7 @@ class QuizQuestionList(generics.ListAPIView):
         if category:
             queryset = queryset.filter(category=category)
         if difficulty:
-            queryset = queryset.filter(difficulty=difficulty)
+            queryset = queryset.filter(difficulty=difficulty.lower())
 
         
         # Exclude questions already attempted by the user
@@ -228,6 +228,7 @@ class QuizQuestionList(generics.ListAPIView):
             for history in user_history:
                 for attempted_question in history.attempted_questions:
                     attempted_questions_texts.append(attempted_question['q_text'])
+                    # print(attempted_question['q_text'])
             # Create a Q object to match any of the attempted questions
             query = Q()
             for question_text in attempted_questions_texts:

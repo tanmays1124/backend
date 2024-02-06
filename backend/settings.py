@@ -31,7 +31,7 @@ SECRET_KEY = 'django-insecure-k_e070_1zkczt@wi1k(ssmf1c2s4l$cy=x*a9bdw(@=j)o)aak
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ["*"]
 
 
 # Application definition
@@ -92,7 +92,12 @@ DATABASES = {
     'default': {
         'ENGINE': 'djongo',
         'NAME': 'quizvizz',
+    #     "CLIENT": {
+    #         'host': 'mongodb://admin:admin_password@3.110.181.46:27017/',
+       
+    #    }
     }
+
 }
 
 
@@ -150,7 +155,7 @@ REST_FRAMEWORK = {
 CORS_ALLOW_ALL_ORIGINS = True
 
 CORS_ALLOWED_ORIGINS = [
-    "http://localhost:3000", # Replace with the origin of your React app
+    "http://3.110.181.46:3000", # Replace with the origin of your React app
 ]
 
 EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
