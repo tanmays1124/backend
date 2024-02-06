@@ -92,11 +92,12 @@ DATABASES = {
     'default': {
         'ENGINE': 'djongo',
         'NAME': 'quizvizz',
-    }
-    "CLIENT": {
-    'host': 'mongodb://admin:admin_password@3.110.181.46:27017/',
+        "CLIENT": {
+            'host': 'mongodb://admin:admin_password@3.110.181.46:27017/',
        
        }
+    }
+
 }
 
 
