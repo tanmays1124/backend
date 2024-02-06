@@ -453,12 +453,16 @@ def deleteUserProfile(request, user_id):
     try:
         user = CustomUser.objects.get(id=user_id)
         user.delete()
+        data = QuestionHistory.objects.get(user=user_id)
+        data.delete()
         return JsonResponse({'message': 'User profile deleted successfully.'}, status=204)
     except CustomUser.DoesNotExist:
         return JsonResponse({'error': 'User does not exist.'}, status=404)
     except Exception as e:
         return JsonResponse({'error': str(e)}, status=500)
     
+
+  
 
 
 from django.contrib.auth.tokens import PasswordResetTokenGenerator
