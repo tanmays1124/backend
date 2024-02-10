@@ -15,7 +15,7 @@ Including another URLconf
 """
 # from django import views
 from django.urls import path
-from .views import UserDeleteView, register_user, user_login, user_logout, QuizQuestionList, get_user_details, forgot_password, reset_password
+from .views import register_user, user_login, user_logout, QuizQuestionList, get_user_details, forgot_password, reset_password
 from .views import QuestionHistoryListCreateView, QuestionHistoryDetailView, update_model, upload_photo, deleteUserProfile,get_user_photo
 
 

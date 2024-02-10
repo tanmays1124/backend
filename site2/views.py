@@ -191,15 +191,6 @@ def user_logout(request):
 
 
 
-class UserDeleteView(View):
-    def destroy(self, request, user_id=None):
-        try:
-            user = CustomUser.objects.get(id=user_id)
-            user.delete()
-            return Response(status=status.HTTP_204_NO_CONTENT) 
-        except CustomUser.DoesNotExist:
-            return Response(status=status.HTTP_404_NOT_FOUND)
-
 
 
 
@@ -449,18 +440,24 @@ def get_user_photo(request, user_id):
 
 
 
-@api_view(['POST'])
+@api_view(['DELETE'])
 def deleteUserProfile(request, user_id):
     try:
         user = CustomUser.objects.get(id=user_id)
         user.delete()
-        data = QuestionHistory.objects.get(user=user_id)
-        data.delete()
+        try:
+            data = QuestionHistory.objects.get(user=user_id)
+            data.delete()
+        except:
+            print('No history')
+            pass
+        
         return JsonResponse({'message': 'User profile deleted successfully.'}, status=204)
     except CustomUser.DoesNotExist:
         return JsonResponse({'error': 'User does not exist.'}, status=404)
     except Exception as e:
         return JsonResponse({'error': str(e)}, status=500)
+    
     
 
   

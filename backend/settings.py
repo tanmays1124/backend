@@ -53,14 +53,16 @@ INSTALLED_APPS = [
 ]
 
 MIDDLEWARE = [
-    'django.middleware.security.SecurityMiddleware',
-    'django.contrib.sessions.middleware.SessionMiddleware',
-    'django.middleware.common.CommonMiddleware',
-    'django.middleware.csrf.CsrfViewMiddleware',
-    'django.contrib.auth.middleware.AuthenticationMiddleware',
-    'django.contrib.messages.middleware.MessageMiddleware',
-    'django.middleware.clickjacking.XFrameOptionsMiddleware',
-    'corsheaders.middleware.CorsMiddleware',
+'django.middleware.security.SecurityMiddleware',
+'django.contrib.sessions.middleware.SessionMiddleware',
+"corsheaders.middleware.CorsMiddleware",
+'django.middleware.common.CommonMiddleware',
+'django.middleware.csrf.CsrfViewMiddleware',
+'django.contrib.auth.middleware.AuthenticationMiddleware',
+'django.contrib.messages.middleware.MessageMiddleware',
+'django.middleware.clickjacking.XFrameOptionsMiddleware',
+'django.middleware.cache.FetchFromCacheMiddleware',
+    
 
 ]
 
@@ -92,10 +94,11 @@ DATABASES = {
     'default': {
         'ENGINE': 'djongo',
         'NAME': 'quizvizz',
-    #     "CLIENT": {
-    #         'host': 'mongodb://admin:admin_password@3.110.181.46:27017/',
-       
-    #    }
+        "CLIENT": {
+            'host': 'mongodb+srv://admin:<password>@cluster0.znbofaq.mongodb.net/?retryWrites=true&w=majority',
+            'username': 'admin',
+            'password': 'admin',
+       }
     }
 
 }
@@ -155,8 +158,9 @@ REST_FRAMEWORK = {
 CORS_ALLOW_ALL_ORIGINS = True
 
 CORS_ALLOWED_ORIGINS = [
-    "http://3.110.181.46:3000", # Replace with the origin of your React app
+    'http://localhost:3000', # Replace with the origin of your React app
 ]
+
 
 EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
 EMAIL_HOST = 'smtp.gmail.com'
