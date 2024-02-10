@@ -451,7 +451,7 @@ def deleteUserProfile(request, user_id):
         except:
             print('No history')
             pass
-        
+
         return JsonResponse({'message': 'User profile deleted successfully.'}, status=204)
     except CustomUser.DoesNotExist:
         return JsonResponse({'error': 'User does not exist.'}, status=404)
@@ -505,7 +505,7 @@ import base64
 
 
 
-
+import site2.ip as ip
 @csrf_exempt
 def forgot_password(request):
     if request.method == 'POST':
@@ -526,13 +526,16 @@ def forgot_password(request):
             [email],
             fail_silently=False,
         )
-        return render(request, 'mail_sent.html',{'email':email})
+        return render(request, 'mail_sent.html',{'email':email,'ip':ip.ip})
     elif request.method == 'GET':
         # Handle GET request if needed, for example, you can render a form to collect email
         return render(request, 'get_email.html')
 
     else:
         return JsonResponse({'error': 'Invalid request method.'}, status=400)
+
+
+
 
 @csrf_exempt
 def reset_password(request):
@@ -549,7 +552,7 @@ def reset_password(request):
             new_password = request.POST.get('new_password')
             user.set_password(new_password)
             user.save()
-            return render(request, 'success.html')
+            return render(request, 'success.html',{'ip':ip.ip})
 
         else:
             return JsonResponse({'error': 'Invalid or expired reset token.'}, status=400)
